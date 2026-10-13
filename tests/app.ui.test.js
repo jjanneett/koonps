@@ -1,4 +1,13 @@
 import { test, expect } from '@playwright/test';
+import { readFile } from 'node:fs/promises';
+
+const files = {
+  '/index.html': ['index.html', 'text/html'],
+  '/css/style.css': ['css/style.css', 'text/css'],
+  '/js/data.js': ['js/data.js', 'text/javascript'],
+  '/js/app.js': ['js/app.js', 'text/javascript'],
+  '/assets/logo.png': ['assets/logo.png', 'image/png'],
+};
 
 async function add(page, name, role = 'role-0', phone = '010-1234-5678') {
   await page.getByRole('button', { name: '직원 추가', exact: true }).click();
@@ -7,7 +16,19 @@ async function add(page, name, role = 'role-0', phone = '010-1234-5678') {
   await page.getByLabel('전화번호', { exact: true }).fill(phone);
   await page.getByRole('button', { name: '완료', exact: true }).click();
 }
-test.beforeEach(async ({ page }) => { await page.goto('/'); });
+test.beforeEach(async ({ page }, testInfo) => {
+  if (['local', 'offline'].includes(testInfo.project.name)) await page.context().setOffline(true);
+  if (testInfo.project.name === 'offline') {
+    // Serve the shipped files from memory while offline; no HTTP server is used.
+    await page.context().route('**/*', async route => {
+      const url = new URL(route.request().url());
+      const file = files[url.pathname];
+      if (url.hostname !== 'personnel.test' || !file) { await route.abort(); return; }
+      await route.fulfill({ body: await readFile(new URL(`../${file[0]}`, import.meta.url)), contentType: file[1] });
+    });
+  }
+  await page.goto(testInfo.project.use.baseURL);
+});
 
 test('빈 화면과 한국 날짜, 960px / 모바일 화면', async ({ page }) => {
   await page.clock.install({ time: new Date('2026-10-13T15:01:00Z') });

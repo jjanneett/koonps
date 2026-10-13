@@ -1,4 +1,7 @@
-import { KEY, COLORS, OPTIONS, initialState, display, personnel, insertEmployee, changeRole, koreaDate, validateState } from './data.js';
+(() => {
+'use strict';
+
+const { KEY, COLORS, OPTIONS, initialState, display, personnel, insertEmployee, changeRole, koreaDate, validateState } = globalThis.Personnel;
 
 const $ = id => document.getElementById(id);
 const popup = $('popup');
@@ -370,3 +373,4 @@ window.addEventListener('storage', event => {
 setInterval(updateDate, 30000);
 render();
 if (storageError) { $('save').classList.add('error'); $('save-text').textContent = '자동 저장 확인 필요'; toast(startupError); }
+})();

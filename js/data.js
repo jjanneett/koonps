@@ -1,7 +1,10 @@
-export const KEY = 'nam-myeon-personnel-v1';
-export const COLORS = { blue: '파랑', red: '빨강', black: '검정' };
-export const TITLES = ['분 소 장', '계 장', '현장지원직(해설)', '수익시설', '환경관리', '지킴이', '탐방운전', '분소 청사관리', '사회복무요원'];
-export const WORK = [
+(() => {
+'use strict';
+
+const KEY = 'nam-myeon-personnel-v1';
+const COLORS = { blue: '파랑', red: '빨강', black: '검정' };
+const TITLES = ['분 소 장', '계 장', '현장지원직(해설)', '수익시설', '환경관리', '지킴이', '탐방운전', '분소 청사관리', '사회복무요원'];
+const WORK = [
   { id: 'office', label: '사무실', color: 'blue' },
   { id: 'center', label: '체험학습관', color: 'blue' },
   { id: 'camp', label: '야 영 장', color: 'blue' },
@@ -12,19 +15,19 @@ export const WORK = [
   { id: 'sick', label: '병 가', color: 'red' },
   { id: 'public', label: '공 가', color: 'red' },
 ];
-export const NOTES = [
+const NOTES = [
   { id: 'none', label: '—', color: 'black' },
   { id: 'duty', label: '당 직', color: 'red' },
   { id: 'duty-off', label: '당 직 휴 무', color: 'red' },
 ];
-export const OPTIONS = { work: WORK, note: NOTES };
-export function initialState() {
+const OPTIONS = { work: WORK, note: NOTES };
+function initialState() {
   return { version: 1, roles: TITLES.map((title, i) => ({ id: `role-${i}`, title })), employees: [], logo: null };
 }
-export function display(value, field) {
+function display(value, field) {
   return value.type === 'custom' ? value : OPTIONS[field].find(option => option.id === value.id);
 }
-export function personnel(employees) {
+function personnel(employees) {
   const count = { total: employees.length, working: 0, off: 0, other: 0 };
   for (const employee of employees) {
     if (employee.work.type === 'preset') {
@@ -36,7 +39,7 @@ export function personnel(employees) {
   }
   return count;
 }
-export function insertEmployee(state, employee) {
+function insertEmployee(state, employee) {
   const last = state.employees.findLastIndex(item => item.role === employee.role);
   if (last >= 0) state.employees.splice(last + 1, 0, employee);
   else {
@@ -45,17 +48,17 @@ export function insertEmployee(state, employee) {
     state.employees.splice(index < 0 ? state.employees.length : index, 0, employee);
   }
 }
-export function changeRole(state, employee, role) {
+function changeRole(state, employee, role) {
   if (employee.role === role) return;
   state.employees = state.employees.filter(item => item.id !== employee.id);
   employee.role = role;
   insertEmployee(state, employee);
 }
-export function koreaDate(now = new Date()) {
+function koreaDate(now = new Date()) {
   const parts = Object.fromEntries(new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'long' }).formatToParts(now).map(part => [part.type, part.value]));
   return { text: `${parts.year}. ${parts.month}. ${parts.day}. ${parts.weekday}`, iso: `${parts.year}-${parts.month}-${parts.day}` };
 }
-export function validateState(value) {
+function validateState(value) {
   const bad = () => { throw new Error('올바른 근무현황표 백업 파일이 아닙니다.'); };
   const text = (v, max) => typeof v === 'string' && v.trim().length > 0 && v.length <= max;
   if (!value || value.version !== 1 || !Array.isArray(value.roles) || !Array.isArray(value.employees) || value.roles.length < 1 || value.roles.length > 50 || value.employees.length > 500) bad();
@@ -83,3 +86,7 @@ export function validateState(value) {
   }
   return state;
 }
+
+// Classic scripts can share this API when index.html is opened as a local file.
+globalThis.Personnel = Object.freeze({ KEY, COLORS, TITLES, WORK, NOTES, OPTIONS, initialState, display, personnel, insertEmployee, changeRole, koreaDate, validateState });
+})();

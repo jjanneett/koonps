@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { initialState, personnel, insertEmployee, changeRole, koreaDate, validateState } from '../js/data.js';
+import '../js/data.js';
+
+const { initialState, personnel, insertEmployee, changeRole, koreaDate, validateState } = globalThis.Personnel;
 
 const employee = (id, role = 'role-0', work = 'office', note = 'none') => ({ id, role, name: id, phone: '010-1234-5678', work: { type: 'preset', id: work }, note: { type: 'preset', id: note } });
 test('인원 집계는 요청한 상태 및 비고를 합산하고 직접 입력은 제외한다', () => {
