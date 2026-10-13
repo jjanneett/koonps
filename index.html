@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="태안해안국립공원사무소 남면분소 직원 근무현황표">
+  <title>남면분소 · 직원 근무현황표</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23185bc7'/%3E%3Cpath d='M8 9h16M8 16h16M8 23h16' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <main class="page">
+    <header class="header">
+      <button class="logo" id="logo" type="button" title="로고 이미지 등록 또는 변경" aria-label="로고 이미지 등록 또는 변경">
+        <img src="assets/logo.png" alt="태안해안국립공원사무소 로고">
+      </button>
+      <div class="save" id="save" role="status"><span class="save-dot"></span><span id="save-text">이 브라우저에 자동 저장</span></div>
+    </header>
+
+    <section class="title">
+      <p class="office">태안해안국립공원사무소 <span>남면분소</span></p>
+      <h1>직원 근무현황표</h1>
+      <p class="intro">오늘의 근무 정보를 한눈에 확인하고 관리하세요.</p>
+    </section>
+
+    <section class="board" aria-label="직원 근무현황">
+      <div class="board-top">
+        <div class="personnel" id="personnel" aria-live="polite" aria-label="인원 현황">
+          <div class="count"><span>전체</span><p><strong id="total">0</strong><span>명</span></p></div>
+          <div class="count blue"><span>근무</span><p><strong id="working">0</strong><span>명</span></p></div>
+          <div class="count red"><span>휴무</span><p><strong id="off">0</strong><span>명</span></p></div>
+          <div class="count"><span>기타 <button type="button" class="info" id="info" aria-label="기타 인원 집계 기준">i</button></span><p><strong id="other">0</strong><span>명</span></p></div>
+        </div>
+        <div class="today"><span class="today-label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3v4m8-4v4M4 10h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1Z"/></svg>오늘의 근무 현황</span><time id="date"></time></div>
+      </div>
+      <div class="table-wrap">
+        <table id="table">
+          <caption class="sr-only">남면분소 직원별 직책, 이름, 전화번호, 근무 및 비고</caption>
+          <colgroup><col class="col-role"><col class="col-name"><col class="col-phone"><col class="col-work"><col class="col-note"><col class="col-menu"></colgroup>
+          <thead><tr><th scope="col">직책</th><th scope="col">이름</th><th scope="col">전화번호</th><th scope="col">근무</th><th scope="col">비고</th><th scope="col"><span class="sr-only">직원 관리</span></th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="empty">
+        <span class="empty-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M16 10h16v6H16zM13 13H8v29h32V13h-5M16 25h16M16 33h10"/></svg></span>
+        <h2>첫 번째 직원을 등록해 주세요</h2>
+        <p>직원을 추가하면 직책별로 정리된 근무현황표가 만들어집니다.</p>
+        <button type="button" class="button primary" id="first-add">직원 추가하기 <span aria-hidden="true">→</span></button>
+      </div>
+      <div class="legend"><span><i class="dot blue-bg"></i>근무 상태</span><span><i class="dot red-bg"></i>휴무 · 휴가 · 당직</span><span class="legend-help">항목을 선택하여 바로 변경할 수 있습니다.</span></div>
+    </section>
+
+    <footer class="footer">
+      <div class="actions"><button type="button" class="button primary" id="add"><span class="plus" aria-hidden="true">＋</span>직원 추가</button><button type="button" class="button" id="roles"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16M8 4v6m8 4v6"/></svg>직책 수정</button></div>
+      <div class="tools"><button type="button" class="tool" id="print"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3h10v5M7 17H3V9h18v8h-4M7 14h10v7H7zM17 11h1"/></svg>인쇄</button><button type="button" class="tool" id="export"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 16v5h16v-5"/></svg>백업</button><button type="button" class="tool" id="import"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3m-4 4 4-4 4 4M4 16v5h16v-5"/></svg>불러오기</button></div>
+    </footer>
+    <p class="storage-note">변경 내용은 현재 브라우저에 저장됩니다. 다른 기기로 옮기거나 보관하려면 백업을 이용해 주세요.</p>
+  </main>
+  <input class="hidden" type="file" id="logo-file" accept="image/png,image/jpeg,image/webp">
+  <input class="hidden" type="file" id="backup-file" accept="application/json,.json">
+  <dialog id="popup" aria-labelledby="popup-title"><div class="popup-content" id="popup-content"></div></dialog>
+  <div id="menu" class="menu" hidden></div>
+  <div class="toast" id="toast" role="status" hidden></div>
+</body>
+</html>
